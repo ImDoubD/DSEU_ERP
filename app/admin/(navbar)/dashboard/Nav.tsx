@@ -9,7 +9,7 @@ import { parseJwt } from "@/app/actions/utils";
 export default function Nav() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeLink, setActiveLink] = useState("");
-    const [options, setOptions] = useState(["Dashboard", "Registration Chart", "Admit Card", "Query"]);
+    const [options, setOptions] = useState<string[]>([]);
     useEffect(() => {
         setActiveLink(window.location.pathname);
     }, []);
@@ -17,16 +17,21 @@ export default function Nav() {
 
     useEffect(() => {
         getAuthAdmin().then(async (t: any) => {
-          if (t) {
-            const data = await parseJwt(t.value);
-            // 
-            if (data?.user?.role==='super') {
-                setOptions([...options,"Exam Control", "Edit Student Details"])
+            if (t) {
+                const data = await parseJwt(t.value);
+                //
+                if (data?.user?.role === "super") {
+                    setOptions(["Dashboard","Registration Chart", "Admit Card", "Query","Marks Entry","Exam Control", "Edit Student Details"]);
+                }
+                if (data?.user?.role === "dep") {
+                    setOptions(["Marks Entry"]);
+                }
+                if (data?.user?.role === "admin") {
+                    setOptions(["Registration Chart", "Admit Card", "Query","Marks Entry"]);
+                }
             }
-          }
         });
-      }, []);
-
+    }, []);
 
     return (
         <>
